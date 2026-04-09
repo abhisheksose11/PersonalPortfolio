@@ -1,6 +1,76 @@
 <!DOCTYPE html>
 <link rel="stylesheet" href="style.css">
 <html lang="en" data-theme="light">
+<style>
+  /* --- Common Styles for all Sub-Interest Boxes --- */
+.sub-interest {
+  padding: 1.5rem; /* Generous space inside the box */
+  border-radius: 10px; /* Modern, rounded corners */
+  margin-bottom: 1rem; /* Space between sub-boxes */
+  border-left: 3px solid transparent; /* Prepare for the colored highlight */
+  
+  /* Reset spacing of elements inside the box */
+  h4 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  
+  p {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    opacity: 0.85; /* Makes the description text slightly softer */
+  }
+}
+
+/* Ensure the grid gap is clean */
+.interests-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 992px) {
+  .interests-grid {
+    grid-template-columns: 1fr; /* Stack on mobile */
+  }
+}
+
+
+/* --- Color Scheme 1: Automation (Subtle Blue) --- */
+.automation-box {
+  background-color: rgba(59, 130, 246, 0.06); /* Faint blue background */
+  border-left-color: rgba(59, 130, 246, 0.4);   /* Stronger blue accent line */
+  
+  h4 {
+    color: rgb(147, 197, 253); /* Light blue subtitle */
+  }
+}
+
+
+/* --- Color Scheme 2: Forcefields (Subtle Cyan) --- */
+.forcefields-box {
+  background-color: rgba(34, 211, 238, 0.06); /* Faint cyan background */
+  border-left-color: rgba(34, 211, 238, 0.4);   /* Stronger cyan accent line */
+  
+  h4 {
+    color: rgb(103, 232, 249); /* Light cyan subtitle */
+  }
+}
+
+
+/* --- Color Scheme 3: Uncertainty (Subtle Amber) --- */
+.uncertainty-box {
+  background-color: rgba(251, 191, 36, 0.06); /* Faint amber background */
+  border-left-color: rgba(251, 191, 36, 0.4);   /* Stronger amber accent line */
+  
+  h4 {
+    color: rgb(253, 230, 138); /* Light amber subtitle */
+  }
+}
+</style>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
