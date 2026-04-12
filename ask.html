@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ask About Abhishek — AI Research Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+.chat-page { min-height:100vh; display:flex; flex-direction:column; }
+
+.chat-hero { padding:7rem 2rem 2rem; text-align:center; }
+.chat-hero h1 { font-family:var(--font-display); font-size:2.2rem; font-weight:700; letter-spacing:-0.03em; margin-bottom:0.5rem; }
+.chat-hero .subtitle { color:var(--text-secondary); font-size:0.95rem; max-width:520px; margin:0 auto 0.5rem; line-height:1.6; }
+.chat-hero .powered-by { font-family:var(--font-mono); font-size:0.68rem; color:var(--text-tertiary); letter-spacing:0.08em; text-transform:uppercase; }
+
+.chat-container { flex:1; max-width:760px; width:100%; margin:0 auto; padding:0 1.5rem 2rem; display:flex; flex-direction:column; }
+
+.messages { flex:1; overflow-y:auto; padding:1rem 0; display:flex; flex-direction:column; gap:1.2rem; min-height:300px; max-height:calc(100vh - 340px); }
+
+.message { display:flex; gap:0.75rem; align-items:flex-start; animation:msgIn 0.35s ease; }
+@keyframes msgIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+.message.user { flex-direction:row-reverse; }
+
+.msg-avatar { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.85rem; flex-shrink:0; border:1.5px solid var(--border); }
+.message.assistant .msg-avatar { background:var(--accent); color:#fff; border-color:var(--accent); }
+.message.user .msg-avatar { background:var(--bg-accent); color:var(--text-secondary); }
+
+.msg-bubble { max-width:85%; padding:0.85rem 1.15rem; border-radius:14px; font-size:0.92rem; line-height:1.7; }
+.message.assistant .msg-bubble { background:var(--bg-secondary); border:1px solid var(--border); border-bottom-left-radius:4px; color:var(--text-primary); }
+.message.user .msg-bubble { background:var(--accent); color:#fff; border-bottom-right-radius:4px; }
+
+.msg-bubble a { color:var(--accent); text-decoration:underline; }
+.message.user .msg-bubble a { color:#fff; }
+
+/* Typing dots */
+.typing-dots { display:inline-flex; gap:4px; padding:4px 0; }
+.typing-dots span { width:6px; height:6px; border-radius:50%; background:var(--text-tertiary); animation:bounce 1.4s infinite; }
+.typing-dots span:nth-child(2){animation-delay:0.2s}
+.typing-dots span:nth-child(3){animation-delay:0.4s}
+@keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+
+/* Suggestions */
+.suggestions { display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:1.2rem; }
+.suggestion-chip { background:var(--bg-secondary); border:1px solid var(--border); border-radius:20px; padding:0.45rem 1rem; font-size:0.82rem; font-family:var(--font-body); color:var(--text-secondary); cursor:pointer; transition:all var(--transition); white-space:nowrap; }
+.suggestion-chip:hover { border-color:var(--accent); color:var(--accent); box-shadow:var(--shadow); }
+
+/* Input */
+.chat-input-wrap { display:flex; gap:0.6rem; align-items:flex-end; background:var(--bg-secondary); border:1.5px solid var(--border); border-radius:16px; padding:0.5rem 0.6rem 0.5rem 1.1rem; transition:border-color var(--transition),box-shadow var(--transition); }
+.chat-input-wrap:focus-within { border-color:var(--accent); box-shadow:0 0 0 3px rgba(176,74,50,0.08); }
+[data-theme="dark"] .chat-input-wrap:focus-within { box-shadow:0 0 0 3px rgba(224,122,95,0.12); }
+
+.chat-input { flex:1; border:none; outline:none; background:transparent; font-family:var(--font-body); font-size:0.92rem; color:var(--text-primary); resize:none; min-height:24px; max-height:120px; line-height:1.5; padding:0.3rem 0; }
+.chat-input::placeholder { color:var(--text-tertiary); }
+
+.send-btn { width:38px; height:38px; border-radius:12px; border:none; background:var(--accent); color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all var(--transition); font-size:1.1rem; }
+.send-btn:hover { background:var(--accent-hover); transform:scale(1.05); }
+.send-btn:disabled { opacity:0.4; cursor:not-allowed; transform:none; }
+
+.back-link { display:inline-flex; align-items:center; gap:0.4rem; font-size:0.85rem; color:var(--text-secondary); margin-bottom:1rem; }
+.back-link:hover { color:var(--accent); }
+
+.disclaimer { text-align:center; font-size:0.72rem; color:var(--text-tertiary); margin-top:0.8rem; line-height:1.5; }
+
+/* Source chips below messages */
+.msg-sources { display:flex; flex-wrap:wrap; gap:0.4rem; margin-top:0.6rem; }
+.source-tag { font-family:var(--font-mono); font-size:0.65rem; background:var(--tag-bg); color:var(--tag-text); padding:0.15rem 0.5rem; border-radius:4px; }
+</style>
+</head>
+<body>
+
+<!-- Molecular Canvas -->
+<div class="mol-bg" id="mol-bg"><canvas id="mol-canvas"></canvas></div>
+
+<!-- Nav -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">A. T. Sose</a>
+    <button class="nav-hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html#about">About</a>
+      <a href="index.html#research-interests">Research</a>
+      <a href="index.html#publications">Publications</a>
+      <a href="index.html#contact">Contact</a>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <span class="icon-sun">☀️</span><span class="icon-moon">🌙</span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<div class="chat-page">
+  <div class="chat-hero">
+    <h1>Ask About Abhishek</h1>
+    <p class="subtitle">Search Abhishek's publications, CV, and research interests. Ask anything about his work, background, or expertise.</p>
+    <p class="powered-by">Client-side RAG · No data leaves your browser</p>
+  </div>
+
+  <div class="chat-container">
+    <a href="index.html" class="back-link">← Back to Portfolio</a>
+
+    <div class="suggestions" id="suggestions">
+      <button class="suggestion-chip" data-q="What does Abhishek Sose work on?">What does he work on?</button>
+      <button class="suggestion-chip" data-q="What are Abhishek's key publications?">Key publications?</button>
+      <button class="suggestion-chip" data-q="What is Abhishek's expertise in machine learning for materials?">ML for materials?</button>
+      <button class="suggestion-chip" data-q="Where did Abhishek study?">Education?</button>
+      <button class="suggestion-chip" data-q="What is Bayesian Uncertainty Quantification?">What is BUQ?</button>
+      <button class="suggestion-chip" data-q="How can I contact Abhishek?">Contact info?</button>
+      <button class="suggestion-chip" data-q="What awards has Abhishek received?">Awards?</button>
+      <button class="suggestion-chip" data-q="Is Abhishek looking for faculty positions?">Faculty search?</button>
+    </div>
+
+    <div class="messages" id="messages">
+      <div class="message assistant">
+        <div class="msg-avatar">AT</div>
+        <div class="msg-bubble">
+          Hi! I'm a search assistant with knowledge of Abhishek's research, all 17 publications, CV, and background. Ask me anything — everything runs locally in your browser, no data is sent anywhere.
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-input-wrap">
+      <textarea class="chat-input" id="chatInput" placeholder="Ask about research, publications, or background..." rows="1"></textarea>
+      <button class="send-btn" id="sendBtn" aria-label="Send">➤</button>
+    </div>
+    <p class="disclaimer">Responses generated from Abhishek's CV and publications via client-side search. For official inquiries, <a href="mailto:atsose@umd.edu">email directly</a>.</p>
+  </div>
+</div>
+
+<!-- Scripts: knowledge base → RAG engine → molecules → page logic -->
+<script src="knowledge.js"></script>
+<script src="rag-engine.js"></script>
+<script src="molecules.js"></script>
+<script>
+// Theme
+const toggle=document.getElementById('themeToggle'),html=document.documentElement;
+const saved=localStorage.getItem('theme');
+if(saved)html.setAttribute('data-theme',saved);
+else if(window.matchMedia('(prefers-color-scheme:dark)').matches)html.setAttribute('data-theme','dark');
+toggle.addEventListener('click',()=>{const n=html.getAttribute('data-theme')==='light'?'dark':'light';html.setAttribute('data-theme',n);localStorage.setItem('theme',n)});
+
+// Mobile nav
+document.getElementById('hamburger').addEventListener('click',()=>document.getElementById('navLinks').classList.toggle('open'));
+document.querySelectorAll('.nav-links a').forEach(l=>l.addEventListener('click',()=>document.getElementById('navLinks').classList.remove('open')));
+
+// Init RAG
+RAGEngine.init();
+
+// Chat
+const messagesEl=document.getElementById('messages');
+const chatInput=document.getElementById('chatInput');
+const sendBtn=document.getElementById('sendBtn');
+const suggestionsEl=document.getElementById('suggestions');
+
+function formatText(text) {
+  // Bold
+  text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  // Links [text](url)
+  text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+  // DOI links
+  text = text.replace(/DOI:\s*(10\.\S+)/g, 'DOI: <a href="https://doi.org/$1" target="_blank">$1</a>');
+  // Paragraphs
+  text = text.replace(/\n\n/g, '</p><p>');
+  text = '<p>' + text + '</p>';
+  text = text.replace(/\n/g, '<br>');
+  return text;
+}
+
+function addMessage(role, content) {
+  const div = document.createElement('div');
+  div.className = 'message ' + role;
+  div.innerHTML = `
+    <div class="msg-avatar">${role==='assistant'?'AT':'👤'}</div>
+    <div class="msg-bubble">${role==='assistant' ? formatText(content) : escapeHtml(content)}</div>
+  `;
+  messagesEl.appendChild(div);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function escapeHtml(t) {
+  const d = document.createElement('div');
+  d.textContent = t;
+  return d.innerHTML;
+}
+
+function addSourceTags(results) {
+  if (!results || results.length === 0) return;
+  const lastMsg = messagesEl.querySelector('.message.assistant:last-child .msg-bubble');
+  if (!lastMsg) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'msg-sources';
+  const seen = new Set();
+  results.forEach(r => {
+    const cat = r.doc.category;
+    if (seen.has(cat)) return;
+    seen.add(cat);
+    const tag = document.createElement('span');
+    tag.className = 'source-tag';
+    tag.textContent = cat;
+    wrap.appendChild(tag);
+  });
+  lastMsg.appendChild(wrap);
+}
+
+function showTyping() {
+  const div = document.createElement('div');
+  div.className = 'message assistant';
+  div.id = 'typing';
+  div.innerHTML = '<div class="msg-avatar">AT</div><div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>';
+  messagesEl.appendChild(div);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+function removeTyping() {
+  const el = document.getElementById('typing');
+  if (el) el.remove();
+}
+
+function sendMessage(text) {
+  if (!text.trim()) return;
+  suggestionsEl.style.display = 'none';
+  addMessage('user', text);
+  chatInput.value = '';
+  chatInput.style.height = 'auto';
+
+  showTyping();
+
+  // Simulate brief "thinking" delay for natural feel
+  const delay = 300 + Math.random() * 500;
+  setTimeout(() => {
+    removeTyping();
+    const response = RAGEngine.generateResponse(text);
+    const results = RAGEngine.search(text);
+    addMessage('assistant', response);
+    addSourceTags(results);
+  }, delay);
+}
+
+sendBtn.addEventListener('click', () => sendMessage(chatInput.value));
+chatInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(chatInput.value); }
+});
+chatInput.addEventListener('input', () => {
+  chatInput.style.height = 'auto';
+  chatInput.style.height = Math.min(chatInput.scrollHeight, 120) + 'px';
+});
+document.querySelectorAll('.suggestion-chip').forEach(chip => {
+  chip.addEventListener('click', () => sendMessage(chip.getAttribute('data-q')));
+});
+</script>
+</body>
+</html>
