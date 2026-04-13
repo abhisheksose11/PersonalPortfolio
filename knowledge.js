@@ -17,14 +17,14 @@ const KNOWLEDGE_BASE = [
     id: "contact-1",
     category: "contact",
     keywords: ["contact", "email", "reach", "phone", "address", "collaborate", "collaboration", "hire", "hiring"],
-    content: "You can reach Abhishek at atsose@umd.edu. He is based in Washington, DC (450 Massachusetts Ave NW). His LinkedIn is linkedin.com/in/abhisheksose, Google Scholar profile is available at scholar.google.ca (user: PnaArzMAAAAJ), GitHub: github.com/abhishek-t-sose, and ORCID: 0000-0002-0001-6999. Phone: +1-540-449-8235.",
+    content: "You can reach Abhishek at atsose@umd.edu. He is based in the Washington, DC metro area. His LinkedIn is linkedin.com/in/abhisheksose, Google Scholar profile is available at scholar.google.ca (user: PnaArzMAAAAJ), GitHub: github.com/abhishek-t-sose, and ORCID: 0000-0002-0001-6999.",
     metadata: { priority: 9 }
   },
   {
     id: "location-1",
     category: "contact",
     keywords: ["where", "live", "location", "based", "city", "state", "country", "washington", "dc", "maryland"],
-    content: "Abhishek currently lives in Washington, DC (450 Massachusetts Ave NW, Apt 1008, Washington, DC 20001). He works at the University of Maryland, College Park, MD.",
+    content: "Abhishek is based in the Washington, DC metro area. He works at the University of Maryland, College Park, MD.",
     metadata: { priority: 9 }
   },
 
